@@ -54,7 +54,7 @@ minikube addons enable ingress
 
 ```bash
 git clone https://github.com/jpalenz77/Practica_Kubernetes
-cd radarr-chart
+cd Practica_Kubernetes
 
 # Instalar con contraseña personalizada de base de datos
 helm install radarr-release . --set database.password=TuContraseñaSegura
