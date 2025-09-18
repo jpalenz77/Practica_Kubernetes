@@ -1,114 +1,218 @@
-# Práctica: Despliegue de Radarr en Kubernetes con Helm
+# Despliegue de Radarr en Kubernetes con Helm
 
-Este repositorio contiene un **chart de Helm** para desplegar la aplicación **Radarr** junto con una base de datos **PostgreSQL** en un clúster de Kubernetes.  
-La solución está diseñada para ser **robusta, escalable y persistente**, cumpliendo con los objetivos de la práctica de despliegue de aplicaciones en la nube.
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![Helm](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=helm&logoColor=white)](https://helm.sh/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
-## 🎯 Objetivos de la Práctica
-- **Chart de Helm**: encapsula todos los recursos de Kubernetes necesarios para el despliegue.  
-- **Persistencia de Datos**: PostgreSQL y la configuración de Radarr utilizan *PersistentVolumeClaim (PVC)* para asegurar que los datos no se pierdan al reiniciar los pods.  
-- **Configuración Segura**: las credenciales sensibles se gestionan con *Secrets* de Kubernetes.  
-- **Alta Disponibilidad (HA)**: despliegue con un mínimo de réplicas para garantizar disponibilidad.  
-- **Auto-escalado**: *HorizontalPodAutoscaler (HPA)* ajusta el número de réplicas según el uso de CPU.  
-- **Exposición Externa**: acceso desde fuera del clúster mediante *Ingress* con nombre de dominio.  
-- **Resiliencia**: *liveness* y *readiness probes* aseguran que solo los pods sanos reciban tráfico.  
-- **Documentación**: este README actúa como guía completa de instalación, configuración y gestión.
+Un **chart de Helm** listo para producción para desplegar **Radarr** con **PostgreSQL** en Kubernetes. Esta solución proporciona un despliegue robusto, escalable y persistente adecuado para entornos en la nube.
+
+## 🎯 Características
+
+- **📦 Chart de Helm Completo**: Encapsula todos los recursos necesarios de Kubernetes
+- **💾 Persistencia de Datos**: PostgreSQL y la configuración de Radarr utilizan PersistentVolumeClaims (PVCs)
+- **🔒 Configuración Segura**: Credenciales sensibles gestionadas con Secrets de Kubernetes
+- **🚀 Alta Disponibilidad**: Despliegue multi-réplica para garantizar disponibilidad
+- **📈 Auto-escalado**: HorizontalPodAutoscaler ajusta las réplicas según el uso de CPU
+- **🌐 Acceso Externo**: Controlador Ingress con soporte para dominio personalizado
+- **🏥 Verificaciones de Salud**: Sondas de liveness y readiness aseguran que el tráfico solo vaya a pods saludables
+- **📚 Documentación Completa**: Guía de instalación, configuración y gestión
 
 ## 🛠️ Prerrequisitos
+
 Antes de comenzar, asegúrate de tener las siguientes herramientas instaladas:
 
-- **WSL 2**: Windows Subsystem for Linux (Ubuntu recomendado)  
-- **Minikube**: clúster de Kubernetes de un solo nodo para desarrollo local  
-- **kubectl**: CLI de Kubernetes  
-- **Helm**: gestor de paquetes de Kubernetes
+- **WSL 2**: Windows Subsystem for Linux (se recomienda Ubuntu)
+- **Minikube**: Clúster de Kubernetes de un solo nodo para desarrollo local
+- **kubectl**: Herramienta de línea de comandos de Kubernetes
+- **Helm**: Gestor de paquetes de Kubernetes
 
-### Instalación rápida (desde WSL)
+### Instalación Rápida (WSL)
+
+```bash
+# Iniciar Minikube
 minikube start --driver=docker
 
+# Instalar kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
+# Instalar Helm
 curl -fsSL https://get.helm.sh/helm-v3.12.3-linux-amd64.tar.gz | tar -xz
 sudo mv linux-amd64/helm /usr/local/bin/helm
+```
 
-shell
-Copy code
+## 🚀 Inicio Rápido
 
-## 🚀 Instalación y Despliegue
+### 1. Habilitar Complementos de Minikube
 
-### 1️⃣ Habilitar Addons de Minikube
+```bash
 minikube addons enable default-storageclass
 minikube addons enable ingress
+```
 
-shell
-Copy code
+### 2. Clonar y Desplegar
 
-### 2️⃣ Clonar el Repositorio e Instalar el Chart
-git clone <URL_DEL_REPOSITORIO>
+```bash
+git clone <URL_DE_TU_REPOSITORIO>
 cd radarr-chart
 
-helm install radarr-release . --set database.password=TuContrasenaSegura
+# Instalar con contraseña personalizada de base de datos
+helm install radarr-release . --set database.password=TuContraseñaSegura
+```
 
-shell
-Copy code
+### 3. Configurar Acceso Externo
 
-### 3️⃣ Configurar el Acceso con `minikube tunnel`
-En una nueva terminal:
+En una nueva terminal, iniciar el túnel:
+```bash
 minikube tunnel
+```
 
-r
-Copy code
-Edita el archivo `C:\Windows\System32\drivers\etc\hosts` (como Administrador) y añade:
+Agregar al archivo hosts (`C:\Windows\System32\drivers\etc\hosts` en Windows):
+```
 127.0.0.1 radarr.minikube.local
+```
 
-markdown
-Copy code
+### 4. Acceder a la Aplicación
 
-## ⚙️ Configuración del Chart
-Personaliza el despliegue editando `values.yaml` o pasando valores con `--set`.
+Visita: **http://radarr.minikube.local**
 
-| Parámetro                               | Descripción                                      | Valor por defecto        |
-|-----------------------------------------|--------------------------------------------------|--------------------------|
-| `replicaCount`                          | Réplicas del despliegue de Radarr                | `2`                      |
-| `database.storage`                       | Tamaño del volumen de PostgreSQL                 | `5Gi`                    |
-| `persistence.config.storage`             | Tamaño del volumen para configuración de Radarr  | `10Gi`                   |
-| `persistence.downloads.storage`          | Tamaño del volumen para descargas de Radarr      | `50Gi`                   |
-| `autoscaling.enabled`                    | Habilita el auto-escalado                        | `true`                   |
-| `autoscaling.targetCPUUtilizationPercentage` | Porcentaje de CPU para escalar                 | `70`                     |
-| `ingress.enabled`                        | Habilita Ingress                                  | `true`                   |
-| `ingress.host`                           | Dominio de acceso a la app                        | `radarr.minikube.local`  |
+## ⚙️ Configuración
 
-## 🌐 Acceso y Gestión
+Personaliza tu despliegue editando `values.yaml` o usando banderas `--set`:
 
-### Acceder a la aplicación
-Una vez activo el túnel y configurado el `hosts`, visita:  
-**URL:** [http://radarr.minikube.local](http://radarr.minikube.local)
+| Parámetro | Descripción | Valor por Defecto |
+|-----------|-------------|-------------------|
+| `replicaCount` | Número de réplicas de Radarr | `2` |
+| `database.storage` | Tamaño del volumen de PostgreSQL | `5Gi` |
+| `persistence.config.storage` | Tamaño del volumen de configuración de Radarr | `10Gi` |
+| `persistence.downloads.storage` | Tamaño del volumen de descargas de Radarr | `50Gi` |
+| `autoscaling.enabled` | Habilitar auto-escalado | `true` |
+| `autoscaling.targetCPUUtilizationPercentage` | Umbral de CPU para escalar | `70` |
+| `ingress.enabled` | Habilitar Ingress | `true` |
+| `ingress.host` | Dominio de la aplicación | `radarr.minikube.local` |
 
-### Verificación del despliegue
+### Ejemplo de Instalación Personalizada
+
+```bash
+helm install radarr-release . \
+  --set replicaCount=3 \
+  --set database.storage=10Gi \
+  --set persistence.downloads.storage=100Gi \
+  --set database.password=MiContraseñaSegura123
+```
+
+## 📊 Comandos de Gestión
+
+### Verificar Despliegue
+
+```bash
+# Verificar todos los recursos
 kubectl get all -l app.kubernetes.io/instance=radarr-release
-kubectl logs <radarr-pod-name>
+
+# Ver logs
+kubectl logs <nombre-pod-radarr>
+
+# Verificar estado del auto-escalado
 kubectl get hpa
+```
 
-shell
-Copy code
+### Escalado Manual
 
-### Escalado manual
+```bash
 kubectl scale deployment radarr-release-radarr-chart --replicas=4
+```
 
-shell
-Copy code
+### Actualizar Configuración
 
-## 📂 Estructura del Chart
+```bash
+helm upgrade radarr-release . --set database.password=NuevaContraseña
+```
+
+### Desinstalar
+
+```bash
+helm uninstall radarr-release
+```
+
+## 📁 Estructura del Proyecto
+
+```
 radarr-chart/
-├── Chart.yaml # Metadatos del chart
-├── values.yaml # Configuraciones por defecto
+├── Chart.yaml                    # Metadatos del chart
+├── values.yaml                   # Configuración por defecto
 ├── templates/
-│ ├── _helpers.tpl # Funciones de plantilla
-│ ├── hpa.yaml # HorizontalPodAutoscaler
-│ ├── postgres-statefulset.yaml# StatefulSet de la base de datos
-│ ├── postgres-service.yaml # Service de PostgreSQL
-│ ├── radarr-deployment.yaml # Deployment de Radarr
-│ ├── radarr-service.yaml # Service de Radarr
-│ ├── radarr-pvc.yaml # PVCs para Radarr
-│ ├── radarr-ingress.yaml # Ingress
-│ └── secrets.yaml # Secrets para credenciales
-└── README.md # Documentación del chart
+│   ├── _helpers.tpl             # Funciones auxiliares de plantillas
+│   ├── hpa.yaml                 # HorizontalPodAutoscaler
+│   ├── postgres-statefulset.yaml # StatefulSet de PostgreSQL
+│   ├── postgres-service.yaml    # Service de PostgreSQL
+│   ├── radarr-deployment.yaml   # Deployment de Radarr
+│   ├── radarr-service.yaml      # Service de Radarr
+│   ├── radarr-pvc.yaml          # PersistentVolumeClaims de Radarr
+│   ├── radarr-ingress.yaml      # Configuración de Ingress
+│   └── secrets.yaml             # Secrets de Kubernetes
+└── README.md                     # Esta documentación
+```
+
+## 🔍 Solución de Problemas
+
+### Problemas Comunes
+
+**Pod atascado en estado Pending:**
+```bash
+kubectl describe pod <nombre-pod>
+# Verificar problemas de clase de almacenamiento o restricciones de recursos
+```
+
+**No se puede acceder vía Ingress:**
+```bash
+# Verificar que el controlador ingress esté funcionando
+kubectl get pods -n ingress-nginx
+
+# Verificar configuración de ingress
+kubectl describe ingress radarr-release-radarr-chart
+```
+
+**Problemas de conexión a base de datos:**
+```bash
+# Verificar logs de PostgreSQL
+kubectl logs <nombre-pod-postgres>
+
+# Verificar secrets
+kubectl get secrets radarr-release-radarr-chart -o yaml
+```
+
+### Monitoreo
+
+```bash
+# Observar estado de pods
+kubectl get pods -w
+
+# Monitorear uso de recursos
+kubectl top pods
+
+# Verificar eventos
+kubectl get events --sort-by=.metadata.creationTimestamp
+```
+
+## 🤝 Contribuir
+
+1. Haz fork del repositorio
+2. Crea una rama de características (`git checkout -b feature/caracteristica-increible`)
+3. Confirma tus cambios (`git commit -m 'Agregar característica increíble'`)
+4. Empuja a la rama (`git push origin feature/caracteristica-increible`)
+5. Abre un Pull Request
+
+## 📝 Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+## 🙏 Agradecimientos
+
+- [Radarr](https://radarr.video/) - El gestor de colección de películas
+- [PostgreSQL](https://www.postgresql.org/) - La base de datos de código abierto más avanzada del mundo
+- [Kubernetes](https://kubernetes.io/) - Plataforma de orquestación de contenedores
+- [Helm](https://helm.sh/) - El gestor de paquetes para Kubernetes
+
+---
+
+⭐ ¡Si este proyecto te ayudó, por favor dale una estrella!
