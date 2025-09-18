@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "radarr-chart.fullname" . }}
+  labels:
+    {{- include "radarr-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "radarr-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "radarr-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: radarr
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - name: http
+          containerPort: 7878
+          protocol: TCP
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Europe/Madrid"
+        - name: RADARR__Database__Type
+          value: "Postgres"
+        - name: RADARR__Database__Host
+          value: "postgres-service"
+        - name: RADARR__Database__Name
+          value: {{ .Values.database.name | quote }}
+        - name: RADARR__Database__User
+          value: {{ .Values.database.user | quote }}
+        - name: RADARR__Database__Password
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "radarr-chart.fullname" . }}-secrets
+              key: postgres-password
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+        - name: radarr-config
+          mountPath: /config
+        - name: downloads
+          mountPath: /downloads
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: radarr-config
+        persistentVolumeClaim:
+          claimName: radarr-config-pvc
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: downloads-pvc

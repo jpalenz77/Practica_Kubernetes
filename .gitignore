@@ -1,0 +1,13 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+.env
+.vscode/
+.idea/
+
+# Kubernetes / Helm
+*.tgz
+charts/*-*.tgz
+**/tmp/
+**/.helm/
