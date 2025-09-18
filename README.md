@@ -53,7 +53,7 @@ minikube addons enable ingress
 ### 2. Clonar y Desplegar
 
 ```bash
-git clone <URL_DE_TU_REPOSITORIO>
+git clone https://github.com/jpalenz77/Practica_Kubernetes
 cd radarr-chart
 
 # Instalar con contraseña personalizada de base de datos
@@ -69,12 +69,12 @@ minikube tunnel
 
 Agregar al archivo hosts (`C:\Windows\System32\drivers\etc\hosts` en Windows):
 ```
-127.0.0.1 radarr.minikube.local
+127.0.0.1 radarr.practica.local
 ```
 
 ### 4. Acceder a la Aplicación
 
-Visita: **http://radarr.minikube.local**
+Visita: **http://radarr.practica.local**
 
 ## ⚙️ Configuración
 
