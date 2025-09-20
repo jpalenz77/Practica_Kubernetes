@@ -3,6 +3,7 @@
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![Helm](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=helm&logoColor=white)](https://helm.sh/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Radarr](https://img.shields.io/badge/Radarr-FF6F00?style=for-the-badge&logo=radarr&logoColor=white)](https://github.com/Radarr/Radarr)
 
 Un **chart de Helm** listo para producción para desplegar **Radarr** con **PostgreSQL** en Kubernetes. Esta solución proporciona un despliegue robusto, escalable y persistente adecuado para entornos en la nube.
 
