@@ -142,7 +142,7 @@ http://radarr.practica.local
 
 ### Personalización
 
-Personaliza tu despliegue editando `values.yaml` o usando banderas `--set`:
+Personaliza tu despliegue editando `values.yaml` o usando etiquetas con `--set`:
 
 ```bash
 helm install k8s-practica . \
