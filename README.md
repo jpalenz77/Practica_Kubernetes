@@ -109,11 +109,11 @@ helm upgrade k8s-practica . --set database.password=TuContraseñaSegura
 # Iniciar túnel de Minikube (en una terminal separada)
 minikube tunnel
 
-# Añadir al archivo hosts
-echo "127.0.0.1 radarr.practica.local" | sudo tee -a /etc/hosts
+# Añadir al archivo hosts en la ruta (si usas Windows) C:\Windows\System32\drivers\etc\hosts
+127.0.0.1 radarr.practica.local
 
-# Intentar acceder en el navegador (puede fallar)
-# http://radarr.practica.local
+# Intentar acceder en el navegador (puede fallar o dar error de conexión con la API de Radarr)
+http://radarr.practica.local
 ```
 
 **Problemas conocidos con Ingress en Minikube**:
