@@ -21,8 +21,7 @@ Un **chart de Helm** listo para producción para desplegar **Radarr** con **Post
 
 Antes de comenzar, asegúrate de tener las siguientes herramientas instaladas:
 
-- **WSL 2**: Windows Subsystem for Linux (se recomienda Ubuntu)
-- **Minikube**: Clúster de Kubernetes de un solo nodo para desarrollo local
+- **Minikube**: Clúster de Kubernetes de dos nodos para desarrollo local
 - **kubectl**: Herramienta de línea de comandos de Kubernetes
 - **Helm**: Gestor de paquetes de Kubernetes
 
@@ -30,7 +29,7 @@ Antes de comenzar, asegúrate de tener las siguientes herramientas instaladas:
 
 ```bash
 # Iniciar Minikube
-minikube start --driver=docker
+minikube start --nodes 2
 
 # Instalar kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -46,14 +45,14 @@ sudo mv linux-amd64/helm /usr/local/bin/helm
 ### 1. Habilitar Complementos de Minikube
 
 ```bash
-minikube addons enable default-storageclass
+minikube addons enable metrics-server
 minikube addons enable ingress
 ```
 
 ### 2. Clonar y Desplegar
 
 ```bash
-git clone https://github.com/jpalenz77/Practica_Kubernetes
+git clone https://github.com/KeepCodingCloudDevops12/Jose_M_Palenzuela_Kubernetes
 cd Practica_Kubernetes
 
 # Instalar con contraseña personalizada de base de datos
@@ -141,15 +140,15 @@ radarr-chart/
 ├── Chart.yaml                    # Metadatos del chart
 ├── values.yaml                   # Configuración por defecto
 ├── templates/
-│   ├── _helpers.tpl             # Funciones auxiliares de plantillas
-│   ├── hpa.yaml                 # HorizontalPodAutoscaler
+│   ├── _helpers.tpl              # Funciones auxiliares de plantillas
+│   ├── hpa.yaml                  # HorizontalPodAutoscaler
 │   ├── postgres-statefulset.yaml # StatefulSet de PostgreSQL
-│   ├── postgres-service.yaml    # Service de PostgreSQL
-│   ├── radarr-deployment.yaml   # Deployment de Radarr
-│   ├── radarr-service.yaml      # Service de Radarr
-│   ├── radarr-pvc.yaml          # PersistentVolumeClaims de Radarr
-│   ├── radarr-ingress.yaml      # Configuración de Ingress
-│   └── secrets.yaml             # Secrets de Kubernetes
+│   ├── postgres-service.yaml     # Service de PostgreSQL
+│   ├── radarr-deployment.yaml    # Deployment de Radarr
+│   ├── radarr-service.yaml       # Service de Radarr
+│   ├── radarr-pvc.yaml           # PersistentVolumeClaims de Radarr
+│   ├── radarr-ingress.yaml       # Configuración de Ingress
+│   └── secrets.yaml              # Secrets de Kubernetes
 └── README.md                     # Esta documentación
 ```
 
@@ -194,25 +193,6 @@ kubectl top pods
 kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 
-## 🤝 Contribuir
-
-1. Haz fork del repositorio
-2. Crea una rama de características (`git checkout -b feature/caracteristica-increible`)
-3. Confirma tus cambios (`git commit -m 'Agregar característica increíble'`)
-4. Empuja a la rama (`git push origin feature/caracteristica-increible`)
-5. Abre un Pull Request
-
-## 📝 Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
-
-## 🙏 Agradecimientos
-
-- [Radarr](https://radarr.video/) - El gestor de colección de películas
-- [PostgreSQL](https://www.postgresql.org/) - La base de datos de código abierto más avanzada del mundo
-- [Kubernetes](https://kubernetes.io/) - Plataforma de orquestación de contenedores
-- [Helm](https://helm.sh/) - El gestor de paquetes para Kubernetes
-
 ---
 
-⭐ ¡Si este proyecto te ayudó, por favor dale una estrella!
+⭐ ¡Si este proyecto te gusta, por favor dale una estrella!
