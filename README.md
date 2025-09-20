@@ -86,9 +86,13 @@ kubectl port-forward svc/k8s-practica-radarr-chart 7878:7878
 
 Luego abre tu navegador en: `http://localhost:7878`
 
-### Opción 2: Ingress (Opcional)
+**Nota**: Este es el método más confiable para acceder a la aplicación en entornos de desarrollo local.
 
-Si deseas usar Ingress, actualiza `values.yaml`:
+### Opción 2: Ingress (Problemático en Minikube)
+
+**⚠️ Advertencia**: El acceso vía Ingress presenta problemas en Minikube debido a la compleja estructura de red virtualizada y posibles conflictos con cookies/sesiones. Se recomienda usar port-forward para desarrollo local.
+
+Si aún deseas intentar con Ingress, actualiza `values.yaml`:
 
 ```yaml
 ingress:
@@ -108,9 +112,15 @@ minikube tunnel
 # Añadir al archivo hosts
 echo "127.0.0.1 radarr.practica.local" | sudo tee -a /etc/hosts
 
-# Acceder en el navegador
+# Intentar acceder en el navegador (puede fallar)
 # http://radarr.practica.local
 ```
+
+**Problemas conocidos con Ingress en Minikube**:
+- La red virtualizada de Minikube puede causar problemas de enrutamiento
+- Conflictos con la gestión de cookies y sesiones
+- Latencia adicional que puede afectar la funcionalidad de la aplicación
+- En entornos de producción (clusters reales), Ingress funciona correctamente
 
 ## ⚙️ Configuración
 
