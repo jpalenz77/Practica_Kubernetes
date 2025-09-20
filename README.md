@@ -62,7 +62,7 @@ git clone https://github.com/KeepCodingCloudDevops12/Jose_M_Palenzuela_Kubernete
 cd Jose_M_Palenzuela_Kubernetes
 
 # Instalar con contraseña personalizada de base de datos
-helm install radarr-release . --set database.password=TuContraseñaSegura
+helm install k8s-practica . --set database.password=TuContraseñaSegura
 ```
 
 ### 3. Configurar Acceso Externo
@@ -94,12 +94,12 @@ Personaliza tu despliegue editando `values.yaml` o usando banderas `--set`:
 | `autoscaling.enabled` | Habilitar auto-escalado | `true` |
 | `autoscaling.targetCPUUtilizationPercentage` | Umbral de CPU para escalar | `70` |
 | `ingress.enabled` | Habilitar Ingress | `true` |
-| `ingress.host` | Dominio de la aplicación | `radarr.minikube.local` |
+| `ingress.host` | Dominio de la aplicación | `radarr.practica.local` |
 
 ### Ejemplo de Instalación Personalizada
 
 ```bash
-helm install radarr-release . \
+helm install k8s-practica . \
   --set replicaCount=3 \
   --set database.storage=10Gi \
   --set persistence.downloads.storage=100Gi \
@@ -112,7 +112,7 @@ helm install radarr-release . \
 
 ```bash
 # Verificar todos los recursos
-kubectl get all -l app.kubernetes.io/instance=radarr-release
+kubectl get all -l app.kubernetes.io/instance=k8s-practica
 
 # Ver logs
 kubectl logs <nombre-pod-radarr>
@@ -124,19 +124,19 @@ kubectl get hpa
 ### Escalado Manual
 
 ```bash
-kubectl scale deployment radarr-release-radarr-chart --replicas=4
+kubectl scale deployment k8s-practica-radarr-chart --replicas=4
 ```
 
 ### Actualizar Configuración
 
 ```bash
-helm upgrade radarr-release . --set database.password=NuevaContraseña
+helm upgrade k8s-practica . --set database.password=NuevaContraseña
 ```
 
 ### Desinstalar
 
 ```bash
-helm uninstall radarr-release
+helm uninstall k8s-practica
 ```
 
 ## 📁 Estructura del Proyecto
@@ -174,7 +174,7 @@ kubectl describe pod <nombre-pod>
 kubectl get pods -n ingress-nginx
 
 # Verificar configuración de ingress
-kubectl describe ingress radarr-release-radarr-chart
+kubectl describe ingress k8s-practica-radarr-chart
 ```
 
 **Problemas de conexión a base de datos:**
@@ -183,7 +183,7 @@ kubectl describe ingress radarr-release-radarr-chart
 kubectl logs <nombre-pod-postgres>
 
 # Verificar secrets
-kubectl get secrets radarr-release-radarr-chart -o yaml
+kubectl get secrets k8s-practica-radarr-chart -o yaml
 ```
 
 ### Monitoreo
