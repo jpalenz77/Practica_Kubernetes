@@ -17,6 +17,10 @@ Un **chart de Helm** listo para producción para desplegar **Radarr** con **Post
 - **🏥 Verificaciones de Salud**: Sondas de liveness y readiness aseguran que el tráfico solo vaya a pods saludables
 - **📚 Documentación Completa**: Guía de instalación, configuración y gestión
 
+## 🏗️ Arquitectura del Sistema
+
+![Diagrama de Arquitectura](https://github.com/KeepCodingCloudDevops12/Jose_M_Palenzuela_Kubernetes/blob/main/Diagrama.png)
+
 ## 🛠️ Prerrequisitos
 
 Antes de comenzar, asegúrate de tener las siguientes herramientas instaladas:
