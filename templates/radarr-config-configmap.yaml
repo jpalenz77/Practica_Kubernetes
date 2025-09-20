@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "radarr-chart.fullname" . }}-config
+  labels:
+    {{- include "radarr-chart.labels" . | nindent 4 }}
+data:
+  config.xml: |
+    <Config>
+      <LogLevel>info</LogLevel>
+      <UrlBase></UrlBase>
+      <BindAddress>*</BindAddress>
+      <Port>7878</Port>
+      <SslPort>9898</SslPort>
+      <EnableSsl>False</EnableSsl>
+      <LaunchBrowser>False</LaunchBrowser>
+      <AuthenticationMethod>None</AuthenticationMethod>
+      <AuthenticationRequired>Enabled</AuthenticationRequired>
+      <Branch>master</Branch>
+      <UpdateMechanism>Docker</UpdateMechanism>
+      <InstanceName>Radarr</InstanceName>
+      <PostgresUser>{{ .Values.database.user }}</PostgresUser>
+      <PostgresPassword>{{ .Values.database.password }}</PostgresPassword>
+      <PostgresPort>5432</PostgresPort>
+      <PostgresHost>postgres-service</PostgresHost>
+      <PostgresMainDb>radarr-main</PostgresMainDb>
+      <PostgresLogDb>radarr-log</PostgresLogDb>
+    </Config>

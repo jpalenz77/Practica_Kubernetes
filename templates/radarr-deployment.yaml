@@ -14,6 +14,65 @@ spec:
       labels:
         {{- include "radarr-chart.selectorLabels" . | nindent 8 }}
     spec:
+      initContainers:
+      - name: setup-config
+        image: busybox:1.35
+        command:
+        - sh
+        - -c
+        - |
+          # Crear directorio de configuración si no existe
+          mkdir -p /config
+          
+          # Si config.xml existe, hacer backup
+          if [ -f /config/config.xml ]; then
+            echo "Haciendo backup del config.xml existente"
+            cp /config/config.xml /config/config.xml.backup
+          fi
+          
+          # Copiar siempre nuestro config.xml con configuración PostgreSQL
+          cp /tmp/radarr-config/config.xml /config/config.xml
+          echo "Config.xml con PostgreSQL configurado exitosamente"
+          
+          # Verificar el contenido
+          echo "=== Contenido del config.xml ==="
+          cat /config/config.xml
+          echo "=== Fin del config.xml ==="
+        volumeMounts:
+        - name: radarr-config
+          mountPath: /config
+        - name: radarr-config-xml
+          mountPath: /tmp/radarr-config
+      - name: wait-for-postgres
+        image: postgres:13
+        command: 
+        - sh
+        - -c
+        - |
+          until pg_isready -h postgres-service -p 5432 -U {{ .Values.database.user }}; do
+            echo "Esperando a que PostgreSQL esté listo..."
+            sleep 2
+          done
+          echo "PostgreSQL está listo!"
+          
+          # Verificar que las bases de datos existen
+          until PGPASSWORD="$POSTGRES_PASSWORD" psql -h postgres-service -U {{ .Values.database.user }} -d radarr-main -c '\q' >/dev/null 2>&1; do
+            echo "Esperando a que la base de datos radarr-main esté disponible..."
+            sleep 2
+          done
+          
+          until PGPASSWORD="$POSTGRES_PASSWORD" psql -h postgres-service -U {{ .Values.database.user }} -d radarr-log -c '\q' >/dev/null 2>&1; do
+            echo "Esperando a que la base de datos radarr-log esté disponible..."
+            sleep 2
+          done
+          
+          echo "Todas las bases de datos están listas!"
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "radarr-chart.fullname" . }}-secrets
+              key: postgres-password
       containers:
       - name: radarr
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -28,19 +87,6 @@ spec:
           value: "1000"
         - name: TZ
           value: "Europe/Madrid"
-        - name: RADARR__Database__Type
-          value: "Postgres"
-        - name: RADARR__Database__Host
-          value: "postgres-service"
-        - name: RADARR__Database__Name
-          value: {{ .Values.database.name | quote }}
-        - name: RADARR__Database__User
-          value: {{ .Values.database.user | quote }}
-        - name: RADARR__Database__Password
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "radarr-chart.fullname" . }}-secrets
-              key: postgres-password
         resources:
           requests:
             cpu: 100m
@@ -55,16 +101,20 @@ spec:
           mountPath: /downloads
         livenessProbe:
           httpGet:
-            path: /
+            path: /ping
+            port: http
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ping
             port: http
           initialDelaySeconds: 30
           periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 5
-          periodSeconds: 5
+          timeoutSeconds: 5
+          failureThreshold: 3
       volumes:
       - name: radarr-config
         persistentVolumeClaim:
@@ -72,3 +122,6 @@ spec:
       - name: downloads
         persistentVolumeClaim:
           claimName: downloads-pvc
+      - name: radarr-config-xml
+        configMap:
+          name: {{ include "radarr-chart.fullname" . }}-config

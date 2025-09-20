@@ -15,32 +15,52 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:15
+        image: postgres:13  
         ports:
         - containerPort: 5432
-        env:
+        env:       
         - name: POSTGRES_DB
-          value: {{ .Values.database.name | quote }}
+          value: "postgres"
         - name: POSTGRES_USER
           value: {{ .Values.database.user | quote }}
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ include "radarr-chart.fullname" . }}-secrets
-              key: postgres-password
+              key: postgres-password        
+        - name: POSTGRES_INITDB_ARGS
+          value: "--auth-host=scram-sha-256"
         volumeMounts:
         - name: postgres-data
           mountPath: /var/lib/postgresql/data
+        - name: postgres-initdb
+          mountPath: /docker-entrypoint-initdb.d/
         livenessProbe:
-          tcpSocket:
-            port: 5432
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - {{ .Values.database.user | quote }}
+            - -d
+            - postgres
           initialDelaySeconds: 30
           periodSeconds: 10
+          timeoutSeconds: 5
         readinessProbe:
-          tcpSocket:
-            port: 5432
-          initialDelaySeconds: 5
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - {{ .Values.database.user | quote }}
+            - -d
+            - postgres
+          initialDelaySeconds: 10
           periodSeconds: 5
+          timeoutSeconds: 3
+      volumes:
+      - name: postgres-initdb
+        configMap:
+          name: postgres-initdb-config
   volumeClaimTemplates:
   - metadata:
       name: postgres-data

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-initdb-config
+  labels:
+    {{- include "radarr-chart.labels" . | nindent 4 }}
+data:
+  init-radarr-dbs.sql: |
+    -- Crear las bases de datos necesarias para Radarr
+    CREATE DATABASE "radarr-main" OWNER {{ .Values.database.user }};
+    CREATE DATABASE "radarr-log" OWNER {{ .Values.database.user }};
+    
+    -- Dar permisos completos al usuario en ambas bases de datos
+    GRANT ALL PRIVILEGES ON DATABASE "radarr-main" TO {{ .Values.database.user }};
+    GRANT ALL PRIVILEGES ON DATABASE "radarr-log" TO {{ .Values.database.user }};

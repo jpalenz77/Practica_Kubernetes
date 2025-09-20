@@ -1,34 +1,37 @@
 replicaCount: 2
+
 image:
-  repository: lscr.io/linuxserver/radarr
+  repository: linuxserver/radarr
   tag: latest
+  pullPolicy: IfNotPresent
 
-service:
-  type: ClusterIP
-  port: 7878
-
-ingress:
-  enabled: true
-  className: "nginx" 
-  host: "radarr.practica.local"
 
 database:
-  enabled: true
-  name: radarr
-  user: radarr
-  password: "" # Se gestionará con un Secret
-  storage: 5Gi
+  user: "radarr"
+  storage: "5Gi"
+  password: ""  
+
 
 persistence:
   config:
-    enabled: true
-    storage: 10Gi
+    storage: "10Gi"
   downloads:
-    enabled: true
-    storage: 50Gi
+    storage: "50Gi"
+
 
 autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 5
   targetCPUUtilizationPercentage: 70
+
+
+ingress:
+  enabled: true
+  host: "radarr.practica.local"
+  className: "nginx"
+
+
+service:
+  type: ClusterIP
+  port: 7878
