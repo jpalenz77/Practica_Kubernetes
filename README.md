@@ -64,6 +64,8 @@ cd Jose_M_Palenzuela_Kubernetes
 ```bash
 # Instalar con contraseña personalizada de base de datos
 helm install k8s-practica . --set database.password=TuContraseñaSegura
+# Para desplegar en un namespace a elección
+helm install k8s-practica ./ -n nombrenamespace --create-namespace --set database.password=TuContraseñaSegura
 ```
 
 ### Despliegue con Configuración Personalizada
