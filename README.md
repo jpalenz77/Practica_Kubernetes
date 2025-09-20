@@ -55,7 +55,7 @@ minikube addons enable ingress
 ### Clonar el Repositorio
 
 ```bash
-git clone https://github.com/jpalenz77/Practica_Kubernetes
+git clone https://github.com/KeepCodingCloudDevops12/Jose_M_Palenzuela_Kubernetes
 cd Practica_Kubernetes
 ```
 
