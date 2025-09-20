@@ -309,6 +309,8 @@ kubectl logs postgres-statefulset-0 -f
 
 ### Configuración de Radarr
 
+https://wiki.servarr.com/radarr/postgres-setup
+
 Radarr se configura mediante un archivo `config.xml` que se genera automáticamente con la configuración PostgreSQL correcta. La configuración incluye:
 
 ```xml
