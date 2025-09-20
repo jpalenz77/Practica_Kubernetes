@@ -56,7 +56,7 @@ minikube addons enable ingress
 
 ```bash
 git clone https://github.com/KeepCodingCloudDevops12/Jose_M_Palenzuela_Kubernetes
-cd Practica_Kubernetes
+cd Jose_M_Palenzuela_Kubernetes
 ```
 
 ### Despliegue Básico
