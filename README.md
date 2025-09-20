@@ -28,6 +28,8 @@ Antes de comenzar, asegúrate de tener las siguientes herramientas instaladas:
 - **Minikube**: Clúster de Kubernetes de dos nodos para desarrollo local
 - **kubectl**: Herramienta de línea de comandos de Kubernetes
 - **Helm**: Gestor de paquetes de Kubernetes
+- **Docker**
+- **Git**
 
 ### Instalación Rápida (WSL)
 
