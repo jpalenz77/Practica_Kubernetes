@@ -57,7 +57,7 @@ minikube addons enable ingress
 
 ```bash
 git clone https://github.com/jpalenz77/Practica_Kubernetes
-cd Jose_M_Palenzuela_Kubernetes
+cd Practica_Kubernetess
 ```
 
 ### Despliegue Básico
